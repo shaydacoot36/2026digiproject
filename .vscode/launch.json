@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AiWrapperJavaApplication<ai-wrapper-java>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.shay.ai_wrapper_java.AiWrapperJavaApplication",
+            "projectName": "ai-wrapper-java",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
