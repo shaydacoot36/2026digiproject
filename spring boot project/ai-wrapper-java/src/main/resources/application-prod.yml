@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aiwrapper
+    username: aiwrapper
+    password: change_me
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
