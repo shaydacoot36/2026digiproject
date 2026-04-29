@@ -1,6 +1,6 @@
 package com.example.aiplanner.repository;
 
-import com.example.aiplanner.model.Plan;
+import com.shay.ai_wrapper_java.model.Plan;
 import com.shay.ai_wrapper_java.AiWrapperJavaApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
