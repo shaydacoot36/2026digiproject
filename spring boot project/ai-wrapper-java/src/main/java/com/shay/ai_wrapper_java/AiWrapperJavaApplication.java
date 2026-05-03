@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.example.aiplanner.repository")
+@EnableJpaRepositories(basePackages = {"com.example.aiplanner.repository", "com.shay.ai_wrapper_java.repository"})
 public class AiWrapperJavaApplication {
 
 	public static void main(String[] args) {
