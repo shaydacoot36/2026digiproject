@@ -1,89 +1,87 @@
-import os
+#!/usr/bin/env python3
+"""SQLite Database Query Tool"""
+
 import sqlite3
-from flask import Flask, render_template, g, request, redirect, url_for, jsonify
+import os
+import json
 
-app = Flask(__name__)       
-
-# Support both databases
 DATABASE_DEV = 'spring boot project/ai-wrapper-java/data/devdb.sqlite'
 DATABASE_DEV2 = 'dev2db.sqlite'
 
-def get_db(db_name='dev2db'):
-    """Get database connection. Use 'devdb' for Spring Boot SQLite, 'dev2db' for local."""
-    db_path = DATABASE_DEV if db_name == 'devdb' else DATABASE_DEV2
-    if 'db' not in g:
-        g.db = sqlite3.connect(db_path)
-        g.db.row_factory = sqlite3.Row
-    return g.db
+def connect_db(db_path):
+    """Connect to SQLite database"""
+    if not os.path.exists(db_path):
+        return None
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
-@app.teardown_appcontext
-def close_db(error):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+def get_users(conn):
+    """Get all users"""
+    try:
+        cursor = conn.execute('SELECT user_id, name, email FROM users')
+        return [dict(row) for row in cursor.fetchall()]
+    except Exception:
+        return []
 
-@app.route("/")
-def index():
-    return render_template('home.html')
+def get_tasks(conn):
+    """Get all tasks"""
+    try:
+        cursor = conn.execute('SELECT task_id, title, description, due_date, user_id FROM tasks')
+        return [dict(row) for row in cursor.fetchall()]
+    except Exception:
+        return []
 
-# API endpoints for Users (from devdb.sqlite - Spring Boot database)
-@app.route("/api/users", methods=['GET'])
-def get_users():
-    """Get all users from Spring Boot database"""
-    db = get_db('devdb')
-    users = db.execute('SELECT user_id, name, email FROM users').fetchall()
-    return jsonify([dict(u) for u in users])
-
-@app.route("/api/users/<int:user_id>", methods=['GET'])
-def get_user(user_id):
-    """Get specific user with their tasks"""
-    db = get_db('devdb')
-    user = db.execute('SELECT user_id, name, email FROM users WHERE user_id = ?', (user_id,)).fetchone()
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-    
-    tasks = db.execute('SELECT task_id, title, description, due_date FROM tasks WHERE user_id = ?', (user_id,)).fetchall()
-    return jsonify({"user": dict(user), "tasks": [dict(t) for t in tasks]})
-
-# API endpoints for Tasks (from devdb.sqlite - Spring Boot database)
-@app.route("/api/tasks", methods=['GET'])
-def get_tasks():
-    """Get all tasks from Spring Boot database"""
-    db = get_db('devdb')
-    tasks = db.execute('SELECT task_id, title, description, due_date, user_id FROM tasks').fetchall()
-    return jsonify([dict(t) for t in tasks])
-
-@app.route("/api/database-info", methods=['GET'])
 def database_info():
-    """Get info about connected databases"""
-    devdb_exists = os.path.exists(DATABASE_DEV)
-    dev2db_exists = os.path.exists(DATABASE_DEV2)
-    
+    """Get database information"""
     info = {
-        "devdb_sqlite": {
-            "path": DATABASE_DEV,
-            "exists": devdb_exists,
-            "description": "Spring Boot H2 SQLite database with Users and Tasks"
-        },
-        "dev2db_sqlite": {
-            "path": DATABASE_DEV2,
-            "exists": dev2db_exists,
-            "description": "Legacy Flask SQLite database"
-        }
+        "devdb_sqlite": {"path": DATABASE_DEV, "exists": os.path.exists(DATABASE_DEV)},
+        "dev2db_sqlite": {"path": DATABASE_DEV2, "exists": os.path.exists(DATABASE_DEV2)}
     }
     
-    # Try to get counts if databases exist
-    try:
-        if devdb_exists:
-            db = get_db('devdb')
-            user_count = db.execute('SELECT COUNT(*) as count FROM users').fetchone()[0]
-            task_count = db.execute('SELECT COUNT(*) as count FROM tasks').fetchone()[0]
-            info["devdb_sqlite"]["user_count"] = user_count
-            info["devdb_sqlite"]["task_count"] = task_count
-    except Exception as e:
-        info["devdb_sqlite"]["error"] = str(e)
+    if info["devdb_sqlite"]["exists"]:
+        conn = connect_db(DATABASE_DEV)
+        if conn:
+            try:
+                info["devdb_sqlite"]["users"] = conn.execute('SELECT COUNT(*) as c FROM users').fetchone()[0]
+                info["devdb_sqlite"]["tasks"] = conn.execute('SELECT COUNT(*) as c FROM tasks').fetchone()[0]
+                conn.close()
+            except:
+                pass
     
-    return jsonify(info)
+    return info
+
+def main():
+    """Main interface"""
+    print("\n" + "="*60)
+    print("  SQLite Database Query Tool")
+    print("="*60)
+    
+    info = database_info()
+    print("\n📊 Databases:")
+    for db, data in info.items():
+        print(f"  {db}: {data}")
+    
+    conn = connect_db(DATABASE_DEV)
+    if not conn:
+        print("\n❌ Cannot connect to devdb.sqlite")
+        return
+    
+    print("\n✅ Connected to devdb.sqlite\n")
+    
+    users = get_users(conn)
+    print("📋 Users Found:", len(users))
+    print(json.dumps(users, indent=2))
+    
+    tasks = get_tasks(conn)
+    print("\n📝 Tasks Found:", len(tasks))
+    print(json.dumps(tasks, indent=2))
+    
+    conn.close()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()
