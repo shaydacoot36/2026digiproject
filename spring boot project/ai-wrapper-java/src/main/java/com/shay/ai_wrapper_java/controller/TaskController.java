@@ -1,10 +1,8 @@
 package com.shay.ai_wrapper_java.controller;
 
 import com.shay.ai_wrapper_java.model.Task;
-import com.shay.ai_wrapper_java.model.User;
 import com.shay.ai_wrapper_java.repository.TaskRepository;
 import com.shay.ai_wrapper_java.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +15,13 @@ import java.util.Map;
 @RequestMapping("/api/tasks")
 @CrossOrigin(origins = "*")
 public class TaskController {
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public TaskController(TaskRepository taskRepository, UserRepository userRepository) {
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createTask(@RequestBody Task task) {

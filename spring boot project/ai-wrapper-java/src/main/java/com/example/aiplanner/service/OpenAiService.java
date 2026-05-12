@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class OpenAiService {
-    private final boolean mock = true; // set to false to implement real OpenAI calls later
 
     public PlanResponse generatePlan(PlanRequest req) {
         // For now return a simple mock plan

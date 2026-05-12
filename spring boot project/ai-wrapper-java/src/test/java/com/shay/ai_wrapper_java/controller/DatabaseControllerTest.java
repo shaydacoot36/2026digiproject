@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -17,9 +16,6 @@ public class DatabaseControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     // ==================== USER ENDPOINT TESTS ====================
 
@@ -139,7 +135,7 @@ public class DatabaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(taskJson))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.dueDate").matches("^\\d{4}-\\d{2}-\\d{2}$"));
+            .andExpect(jsonPath("$.dueDate").value("2026-06-01"));
 
         System.out.println("✓ Task due date format validation passed");
     }

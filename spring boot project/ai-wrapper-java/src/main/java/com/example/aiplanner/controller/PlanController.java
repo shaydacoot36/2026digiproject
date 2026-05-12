@@ -4,7 +4,6 @@ import com.example.aiplanner.dto.PlanRequest;
 import com.example.aiplanner.dto.PlanResponse;
 import com.example.aiplanner.service.PlanService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class PlanController {
     private final PlanService planService;
 
-    @Autowired
     public PlanController(PlanService planService) {
         this.planService = planService;
     }
