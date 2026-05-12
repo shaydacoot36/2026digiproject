@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """SQLite Database Query Tool"""
 
 import sqlite3
@@ -62,23 +62,23 @@ def main():
     print("="*60)
     
     info = database_info()
-    print("\n📊 Databases:")
+    print("\n Databases:")
     for db, data in info.items():
         print(f"  {db}: {data}")
     
     conn = connect_db(DATABASE_DEV)
     if not conn:
-        print("\n❌ Cannot connect to devdb.sqlite")
+        print("\n Cannot connect to devdb.sqlite")
         return
     
-    print("\n✅ Connected to devdb.sqlite\n")
+    print("\n Connected to devdb.sqlite\n")
     
     users = get_users(conn)
-    print("📋 Users Found:", len(users))
+    print("Users Found:", len(users))
     print(json.dumps(users, indent=2))
     
     tasks = get_tasks(conn)
-    print("\n📝 Tasks Found:", len(tasks))
+    print("\n Tasks Found:", len(tasks))
     print(json.dumps(tasks, indent=2))
     
     conn.close()
