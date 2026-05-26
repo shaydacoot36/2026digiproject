@@ -320,6 +320,43 @@
             </div>
         </section>
         
+        <!-- Study Plan Generator -->
+        <section style="background: #fff; padding: 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);">
+            <h2 style="text-align: center; color: #4169E1; margin-bottom: 30px;">Create Your Study Plan</h2>
+            <form id="planForm" style="max-width: 600px; margin: 0 auto;">
+                <div style="margin-bottom: 20px;">
+                    <label for="goal" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">What do you want to study?</label>
+                    <input type="text" id="goal" name="goal" placeholder="e.g., Biology NCEA Level 3" required 
+                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="days" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">Study period (days)</label>
+                    <input type="number" id="days" name="days" value="14" min="1" max="365" 
+                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="hours" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">Hours per week</label>
+                    <input type="number" id="hours" name="hours" value="7" min="1" max="60" step="0.5"
+                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">Generate Study Plan</button>
+            </form>
+            
+            <div id="planResults" style="margin-top: 30px; display: none;">
+                <h3 style="color: #4169E1; border-bottom: 3px solid #93C5FD; padding-bottom: 10px;">Your Study Plan</h3>
+                <div id="sessionsList"></div>
+            </div>
+            
+            <div id="loadingSpinner" style="text-align: center; display: none; margin-top: 20px;">
+                <p style="color: #4169E1; font-weight: 600;">Creating your personalized study plan...</p>
+            </div>
+            
+            <div id="errorMessage" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-top: 20px; display: none;"></div>
+        </section>
+        
         <!-- Target Audience -->
         <section style="background: linear-gradient(135deg, #E0E7FF 0%, #F8FAFC 100%); padding: 40px; border-radius: 12px; margin-bottom: 40px;">
             <h2 style="text-align: center; color: #4169E1; margin-bottom: 30px;">Perfect For</h2>
@@ -387,5 +424,89 @@
     <div class="disclaimer">
         LearnFlow is an innovative study planning platform designed to help secondary school students succeed in their NCEA qualifications.
     </div>
+    
+    <script>
+        // Study Plan Form Handler
+        document.getElementById('planForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const goal = document.getElementById('goal').value;
+            const horizonDays = parseInt(document.getElementById('days').value);
+            const hoursPerWeek = parseFloat(document.getElementById('hours').value);
+            
+            // Show loading, hide errors
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('planResults').style.display = 'none';
+            
+            try {
+                // Call the backend API
+                const response = await fetch('http://localhost:8080/api/plans', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        goal: goal,
+                        horizonDays: horizonDays,
+                        hoursPerWeek: hoursPerWeek
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const plan = await response.json();
+                
+                // Hide loading
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Display the plan
+                displayPlan(plan);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = 
+                    'Error creating study plan. Make sure the backend is running on http://localhost:8080';
+            }
+        });
+        
+        function displayPlan(plan) {
+            const sessionsList = document.getElementById('sessionsList');
+            sessionsList.innerHTML = '';
+            
+            // Display goal
+            const goalDiv = document.createElement('div');
+            goalDiv.style.cssText = 'background: #E0E7FF; padding: 15px; border-radius: 8px; margin-bottom: 15px;';
+            goalDiv.innerHTML = `<strong style="color: #4169E1;">Goal:</strong> ${plan.goal}`;
+            sessionsList.appendChild(goalDiv);
+            
+            // Display sessions
+            if (plan.sessions && plan.sessions.length > 0) {
+                plan.sessions.forEach((session, index) => {
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.style.cssText = 'background: #F8FAFC; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #4169E1;';
+                    sessionDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #4169E1;">Day ${index + 1}: ${session.date}</strong>
+                                <p style="margin: 8px 0 0 0; color: #555;">${session.topic}</p>
+                            </div>
+                            <div style="text-align: right; color: #4169E1; font-weight: 600;">
+                                ${session.hoursPerDay}h
+                            </div>
+                        </div>
+                    `;
+                    sessionsList.appendChild(sessionDiv);
+                });
+            }
+            
+            // Show results
+            document.getElementById('planResults').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
