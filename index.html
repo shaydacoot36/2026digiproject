@@ -357,6 +357,16 @@
             <div id="errorMessage" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-top: 20px; display: none;"></div>
         </section>
         
+        <!-- Saved Plans Section -->
+        <section style="background: #fff; padding: 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);">
+            <h2 style="text-align: center; color: #4169E1; margin-bottom: 30px;">Your Saved Study Plans</h2>
+            <button onclick="loadSavedPlans()" class="btn btn-secondary" style="display: block; margin: 0 auto 20px;">Refresh Plans</button>
+            <div id="savedPlansList" style="display: grid; gap: 15px;"></div>
+            <div id="noPlansMessage" style="text-align: center; color: #999; padding: 30px;">
+                No study plans yet. Create one above to get started!
+            </div>
+        </section>
+        
         <!-- Target Audience -->
         <section style="background: linear-gradient(135deg, #E0E7FF 0%, #F8FAFC 100%); padding: 40px; border-radius: 12px; margin-bottom: 40px;">
             <h2 style="text-align: center; color: #4169E1; margin-bottom: 30px;">Perfect For</h2>
@@ -426,6 +436,9 @@
     </div>
     
     <script>
+        // Load saved plans on page load
+        window.addEventListener('load', loadSavedPlans);
+        
         // Study Plan Form Handler
         document.getElementById('planForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -464,6 +477,12 @@
                 
                 // Display the plan
                 displayPlan(plan);
+                
+                // Reload saved plans
+                setTimeout(loadSavedPlans, 500);
+                
+                // Clear form
+                document.getElementById('planForm').reset();
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -506,6 +525,60 @@
             
             // Show results
             document.getElementById('planResults').style.display = 'block';
+        }
+
+        async function loadSavedPlans() {
+            try {
+                const response = await fetch('http://localhost:8080/api/plans');
+                if (!response.ok) throw new Error('Failed to load plans');
+                
+                const data = await response.json();
+                const plans = data.data || [];
+                const savedPlansList = document.getElementById('savedPlansList');
+                const noPlansMessage = document.getElementById('noPlansMessage');
+                
+                savedPlansList.innerHTML = '';
+                
+                if (plans.length === 0) {
+                    noPlansMessage.style.display = 'block';
+                } else {
+                    noPlansMessage.style.display = 'none';
+                    plans.forEach(plan => {
+                        const planCard = document.createElement('div');
+                        planCard.style.cssText = 'background: #F8FAFC; padding: 20px; border-radius: 8px; border-left: 4px solid #4169E1; display: flex; justify-content: space-between; align-items: center;';
+                        planCard.innerHTML = `
+                            <div>
+                                <h4 style="margin: 0; color: #4169E1;">${plan.title}</h4>
+                                <p style="margin: 5px 0; color: #999; font-size: 12px;">ID: ${plan.id}</p>
+                                <p style="margin: 5px 0; color: #555; font-size: 13px;">${plan.description}</p>
+                            </div>
+                            <button onclick="deletePlan(${plan.id})" class="btn btn-secondary" style="padding: 8px 15px; font-size: 12px;">Delete</button>
+                        `;
+                        savedPlansList.appendChild(planCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        }
+
+        async function deletePlan(planId) {
+            if (!confirm('Are you sure you want to delete this plan?')) return;
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/plans/${planId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadSavedPlans();
+                } else {
+                    alert('Failed to delete plan');
+                }
+            } catch (error) {
+                console.error('Error deleting plan:', error);
+                alert('Error deleting plan');
+            }
         }
     </script>
 </body>
