@@ -1,0 +1,57 @@
+-- database: ./dev2db.sqlite
+
+SELECT * FROM Task;
+
+INSERT INTO Task (TaskID, Title, Description, DueDate, UserID)
+VALUES
+('T001', 'Create Biology Notes', 'Create revision notes on cell structure and function for NCEA Level 2 Biology.', 1782864000, 'U001'),
+
+('T002', 'Summarise History Topic', 'Use AI summariser to condense notes about the Cold War into key points.', 1782950400, 'U001'),
+
+('T003', 'Generate Quiz Questions', 'Create 15 quiz questions from Mathematics revision notes.', 1783036800, 'U001'),
+
+('T004', 'English Essay Planning', 'Create study notes and a revision schedule for upcoming English assessment.', 1783123200, 'U002'),
+
+('T005', 'Weekly Study Schedule', 'Generate a study timetable balancing homework, revision, and extracurricular activities.', 1783209600, 'U002'),
+
+('T006', 'Chemistry Revision', 'Summarise acids and bases topic and generate flashcard-style questions.', 1783296000, 'U003'),
+
+('T007', 'Physics Formula Sheet', 'Create a summary sheet of important physics formulas for the upcoming test.', 1783382400, 'U001'),
+
+('T008', 'Math Practice Quiz', 'Generate a quiz covering algebra and graphing concepts.', 1783468800, 'U001'),
+
+('T009', 'Geography Notes Summary', 'Summarise notes about natural hazards and plate tectonics.', 1783555200, 'U001'),
+
+('T010', 'NCEA Exam Planner', 'Create a study schedule for upcoming NCEA exams.', 1783641600, 'U001'),
+
+('T011', 'Flashcards for Biology', 'Generate flashcards for genetics terminology.', 1783728000, 'U002'),
+
+('T012', 'English Vocabulary Review', 'Summarise key vocabulary and literary techniques.', 1783814400, 'U002'),
+
+('T013', 'History Timeline', 'Create a timeline of major Cold War events.', 1783900800, 'U002'),
+
+('T014', 'Chemistry Quiz Questions', 'Generate multiple-choice questions about chemical reactions.', 1783987200, 'U002'),
+
+('T015', 'Weekly Revision Plan', 'Create a balanced study timetable for all subjects.', 1784073600, 'U002'),
+
+('T016', 'Physics Notes Cleanup', 'Use AI to simplify and organise physics notes.', 1784160000, 'U003'),
+
+('T017', 'Math Exam Preparation', 'Generate practice problems and worked solutions.', 1784246400, 'U003'),
+
+('T018', 'Business Studies Summary', 'Summarise key concepts from entrepreneurship notes.', 1784332800, 'U003'),
+
+('T019', 'Biology Quiz Generator', 'Create 20 quiz questions from ecology notes.', 1784419200, 'U003'),
+
+('T020', 'English Essay Revision', 'Review essay structure and generate improvement suggestions.', 1784505600, 'U003'),
+
+('T021', 'Geography Flashcards', 'Generate flashcards for population and migration concepts.', 1784592000, 'U004'),
+
+('T022', 'Study Goal Tracker', 'Create a weekly plan to achieve study goals before assessments.', 1784678400, 'U004'),
+
+('T023', 'Computer Science Notes', 'Summarise programming concepts and key terminology.', 1784764800, 'U004'),
+
+('T024', 'Spanish Vocabulary Quiz', 'Generate a vocabulary quiz for common Spanish phrases.', 1784851200, 'U004'),
+
+('T025', 'Exam Countdown Schedule', 'Create a day-by-day revision plan leading up to exams.', 1784937600, 'U005'),
+
+('T026', 'Science Revision Session', 'Generate study questions and summaries for science topics.', 1785024000, 'U005');
