@@ -511,11 +511,11 @@
                     sessionDiv.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <strong style="color: #4169E1;">Day ${index + 1}: ${session.date}</strong>
+                                <strong style="color: #4169E1;">Day ${index + 1}: ${session.day}</strong>
                                 <p style="margin: 8px 0 0 0; color: #555;">${session.topic}</p>
                             </div>
                             <div style="text-align: right; color: #4169E1; font-weight: 600;">
-                                ${session.hoursPerDay}h
+                                ${session.durationHours}h
                             </div>
                         </div>
                     `;

@@ -26,7 +26,7 @@ public class PlanService {
         // Save to database
         Plan dbPlan = new Plan();
         dbPlan.setTitle(req.getGoal());
-        dbPlan.setDescription(String.format("Plan for %s over %d days, %d hours/week", 
+        dbPlan.setDescription(String.format("Plan for %s over %d days, %.1f hours/week", 
             req.getGoal(), req.getHorizonDays(), req.getHoursPerWeek()));
         dbPlan.setCreatedAt(OffsetDateTime.now());
         
