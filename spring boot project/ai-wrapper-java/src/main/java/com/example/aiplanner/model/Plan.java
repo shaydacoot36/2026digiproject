@@ -3,7 +3,7 @@ package com.example.aiplanner.model;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
-@Entity
+@Entity(name = "AiPlannerPlan")
 @Table(name = "plans")
 public class Plan {
 
