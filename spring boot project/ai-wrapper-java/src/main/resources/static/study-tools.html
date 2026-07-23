@@ -39,6 +39,18 @@
                         <label for="hours" style="display: block; font-weight: 600; margin-bottom: 8px;">Hours per week</label>
                         <input type="number" id="hours" value="7" min="1" max="60" step="0.5" required>
                     </div>
+                    <fieldset style="border: 0; margin: 0 0 22px; padding: 0;">
+                        <legend style="font-weight: 600; margin-bottom: 8px;">Days you can study</legend>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <label><input type="checkbox" name="availableDays" value="MONDAY" checked style="width: auto;"> Mon</label>
+                            <label><input type="checkbox" name="availableDays" value="TUESDAY" checked style="width: auto;"> Tue</label>
+                            <label><input type="checkbox" name="availableDays" value="WEDNESDAY" checked style="width: auto;"> Wed</label>
+                            <label><input type="checkbox" name="availableDays" value="THURSDAY" checked style="width: auto;"> Thu</label>
+                            <label><input type="checkbox" name="availableDays" value="FRIDAY" checked style="width: auto;"> Fri</label>
+                            <label><input type="checkbox" name="availableDays" value="SATURDAY" style="width: auto;"> Sat</label>
+                            <label><input type="checkbox" name="availableDays" value="SUNDAY" style="width: auto;"> Sun</label>
+                        </div>
+                    </fieldset>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Generate Study Plan</button>
                 </form>
                 <p id="planError" role="alert" style="color: #c62828; margin-top: 16px; display: none;"></p>
@@ -86,7 +98,8 @@
                     body: JSON.stringify({
                         goal: document.getElementById('goal').value.trim(),
                         horizonDays: Number(document.getElementById('days').value),
-                        hoursPerWeek: Number(document.getElementById('hours').value)
+                        hoursPerWeek: Number(document.getElementById('hours').value),
+                        availableDays: [...document.querySelectorAll('input[name="availableDays"]:checked')].map(input => input.value)
                     })
                 });
                 if (!response.ok) throw new Error('Plan request failed');
@@ -149,7 +162,7 @@
             (plan.sessions || []).forEach((session, index) => {
                 const sessionItem = document.createElement('p');
                 sessionItem.style.margin = '10px 0 0';
-                sessionItem.textContent = `Day ${index + 1}: ${session.topic} (${session.durationHours}h)`;
+                sessionItem.textContent = `${session.day}: ${session.topic} (${session.durationHours}h)`;
                 results.appendChild(sessionItem);
             });
             results.style.display = 'block';
