@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tools | LearnFlow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="page-nav" aria-label="Main navigation">
+        <a class="page-nav__brand" href="index.html">LearnFlow</a>
+        <div class="page-nav__links">
+            <a href="index.html">Home</a>
+            <a href="study-tools.html" aria-current="page">Study Tools</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Study Tools</h1>
+            <p class="tagline">Plan your study time and turn notes into clear revision points.</p>
+            <p class="subtitle">Everything you create is saved only in this browser on this device.</p>
+        </section>
+
+        <div class="tool-grid">
+            <section class="tool-card">
+                <h2 style="color: #4169E1;">Smart Study Planner</h2>
+                <p style="color: #555; margin-bottom: 24px;">Create a realistic study plan around your goal and available time.</p>
+                <form id="planForm">
+                    <div style="margin-bottom: 18px;">
+                        <label for="goal" style="display: block; font-weight: 600; margin-bottom: 8px;">What do you want to study?</label>
+                        <input type="text" id="goal" placeholder="e.g. Biology NCEA Level 3" required>
+                    </div>
+                    <div style="margin-bottom: 18px;">
+                        <label for="days" style="display: block; font-weight: 600; margin-bottom: 8px;">Study period (days)</label>
+                        <input type="number" id="days" value="14" min="1" max="365" required>
+                    </div>
+                    <div style="margin-bottom: 22px;">
+                        <label for="hours" style="display: block; font-weight: 600; margin-bottom: 8px;">Hours per week</label>
+                        <input type="number" id="hours" value="7" min="1" max="60" step="0.5" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Generate Study Plan</button>
+                </form>
+                <p id="planError" role="alert" style="color: #c62828; margin-top: 16px; display: none;"></p>
+                <div id="planResults" class="tool-output" style="display: none;"></div>
+            </section>
+
+            <section class="tool-card">
+                <h2 style="color: #4169E1;">Note Summarizer</h2>
+                <p style="color: #555; margin-bottom: 24px;">Paste your notes and get the most useful revision points in seconds.</p>
+                <label for="notes" style="display: block; font-weight: 600; margin-bottom: 8px;">Your notes</label>
+                <textarea id="notes" placeholder="Paste your class notes here..."></textarea>
+                <button id="summarizeButton" class="btn btn-primary" style="width: 100%; margin-top: 18px;">Summarize Notes</button>
+                <div id="summaryOutput" class="tool-output" style="display: none;" aria-live="polite"></div>
+            </section>
+        </div>
+
+        <section class="tool-card" style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div>
+                    <h2 style="color: #4169E1; margin-bottom: 4px;">Your Saved Study Plans</h2>
+                    <p style="color: #555;">Saved privately in this browser on this device.</p>
+                </div>
+                <button id="refreshPlans" class="btn btn-secondary">Refresh List</button>
+            </div>
+            <div id="savedPlansList" style="display: grid; gap: 15px; margin-top: 24px;"></div>
+            <p id="noPlansMessage" style="text-align: center; color: #999; padding: 30px;">No study plans yet. Create one above to get started.</p>
+        </section>
+    </main>
+
+    <div class="footer-bar">© LearnFlow - AI-Powered Study Planner for NCEA Students</div>
+    <div class="disclaimer">LearnFlow is an innovative study planning platform designed to help secondary school students succeed in their NCEA qualifications.</div>
+
+    <script>
+        const SAVED_PLANS_KEY = 'learnflow-saved-plans';
+
+        document.getElementById('planForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const error = document.getElementById('planError');
+            error.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/plans', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        goal: document.getElementById('goal').value.trim(),
+                        horizonDays: Number(document.getElementById('days').value),
+                        hoursPerWeek: Number(document.getElementById('hours').value)
+                    })
+                });
+                if (!response.ok) throw new Error('Plan request failed');
+                const plan = await response.json();
+                savePlan(plan);
+                displayPlan(plan);
+                renderSavedPlans();
+                event.target.reset();
+            } catch (requestError) {
+                error.textContent = 'Could not create a study plan. Make sure the LearnFlow backend is running.';
+                error.style.display = 'block';
+            }
+        });
+
+        document.getElementById('summarizeButton').addEventListener('click', () => {
+            const notes = document.getElementById('notes').value.trim();
+            const output = document.getElementById('summaryOutput');
+            if (!notes) {
+                output.textContent = 'Paste some notes first, then try again.';
+                output.style.display = 'block';
+                return;
+            }
+
+            const sentences = notes.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+            const importantPoints = sentences
+                .map(sentence => sentence.trim())
+                .filter(sentence => sentence.length > 20)
+                .slice(0, 5);
+            output.innerHTML = '<strong style="color: #4169E1;">Revision summary</strong>';
+            const list = document.createElement('ul');
+            list.style.cssText = 'margin: 12px 0 0; padding-left: 20px; list-style: disc;';
+            (importantPoints.length ? importantPoints : [notes]).forEach(point => {
+                const item = document.createElement('li');
+                item.style.cssText = 'box-shadow: none; border: none; background: transparent; padding: 0; margin: 0 0 8px;';
+                item.textContent = point;
+                list.appendChild(item);
+            });
+            output.appendChild(list);
+            output.style.display = 'block';
+        });
+
+        function getSavedPlans() {
+            try { return JSON.parse(localStorage.getItem(SAVED_PLANS_KEY)) || []; }
+            catch { return []; }
+        }
+
+        function savePlan(plan) {
+            const plans = getSavedPlans();
+            plans.unshift({ ...plan, id: crypto.randomUUID ? crypto.randomUUID() : `plan-${Date.now()}`, createdAt: new Date().toISOString() });
+            localStorage.setItem(SAVED_PLANS_KEY, JSON.stringify(plans));
+        }
+
+        function displayPlan(plan) {
+            const results = document.getElementById('planResults');
+            results.innerHTML = '';
+            const heading = document.createElement('strong');
+            heading.style.color = '#4169E1';
+            heading.textContent = `Your plan: ${plan.goal}`;
+            results.appendChild(heading);
+            (plan.sessions || []).forEach((session, index) => {
+                const sessionItem = document.createElement('p');
+                sessionItem.style.margin = '10px 0 0';
+                sessionItem.textContent = `Day ${index + 1}: ${session.topic} (${session.durationHours}h)`;
+                results.appendChild(sessionItem);
+            });
+            results.style.display = 'block';
+        }
+
+        function renderSavedPlans() {
+            const list = document.getElementById('savedPlansList');
+            const plans = getSavedPlans();
+            list.innerHTML = '';
+            document.getElementById('noPlansMessage').style.display = plans.length ? 'none' : 'block';
+            plans.forEach(plan => {
+                const card = document.createElement('article');
+                card.style.cssText = 'background: #F8FAFC; padding: 20px; border-radius: 8px; border-left: 4px solid #4169E1; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;';
+                const details = document.createElement('div');
+                details.innerHTML = `<strong style="color: #4169E1;">${escapeHtml(plan.goal)}</strong><p style="color: #555; margin-top: 4px;">${plan.sessions?.length || 0} study sessions · saved ${new Date(plan.createdAt).toLocaleDateString()}</p>`;
+                const actions = document.createElement('div');
+                const view = document.createElement('button');
+                view.className = 'btn btn-secondary'; view.textContent = 'View'; view.style.padding = '8px 15px';
+                view.addEventListener('click', () => displayPlan(plan));
+                const remove = document.createElement('button');
+                remove.className = 'btn btn-secondary'; remove.textContent = 'Delete'; remove.style.padding = '8px 15px';
+                remove.addEventListener('click', () => {
+                    localStorage.setItem(SAVED_PLANS_KEY, JSON.stringify(getSavedPlans().filter(savedPlan => savedPlan.id !== plan.id)));
+                    renderSavedPlans();
+                });
+                actions.append(view, remove); card.append(details, actions); list.appendChild(card);
+            });
+        }
+
+        function escapeHtml(value) {
+            const element = document.createElement('span'); element.textContent = value; return element.innerHTML;
+        }
+
+        document.getElementById('refreshPlans').addEventListener('click', renderSavedPlans);
+        renderSavedPlans();
+    </script>
+</body>
+</html>

@@ -194,6 +194,13 @@
     </style>
 </head>
 <body>
+    <nav class="page-nav" aria-label="Main navigation">
+        <a class="page-nav__brand" href="index.html">LearnFlow</a>
+        <div class="page-nav__links">
+            <a href="index.html" aria-current="page">Home</a>
+            <a href="study-tools.html">Study Tools</a>
+        </div>
+    </nav>
     <div class="container">
         <!-- Hero Section -->
         <div class="hero">
@@ -201,7 +208,7 @@
             <p class="tagline">Your AI-Powered Study Companion for NCEA Success</p>
             <p class="subtitle">Stop struggling with study schedules. LearnFlow helps you organize your workload, create effective notes, and master your subjects with AI-powered quizzes and summaries.</p>
             <div class="cta-buttons">
-                <button class="btn btn-primary">Start Studying Now</button>
+                <a class="btn btn-primary" href="study-tools.html">Start Studying Now</a>
                 <button class="btn btn-secondary">Learn More</button>
             </div>
         </div>
@@ -320,52 +327,10 @@
             </div>
         </section>
         
-        <!-- Study Plan Generator -->
-        <section style="background: #fff; padding: 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);">
-            <h2 style="text-align: center; color: #4169E1; margin-bottom: 30px;">Create Your Study Plan</h2>
-            <form id="planForm" style="max-width: 600px; margin: 0 auto;">
-                <div style="margin-bottom: 20px;">
-                    <label for="goal" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">What do you want to study?</label>
-                    <input type="text" id="goal" name="goal" placeholder="e.g., Biology NCEA Level 3" required 
-                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label for="days" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">Study period (days)</label>
-                    <input type="number" id="days" name="days" value="14" min="1" max="365" 
-                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label for="hours" style="display: block; color: #111827; font-weight: 600; margin-bottom: 8px;">Hours per week</label>
-                    <input type="number" id="hours" name="hours" value="7" min="1" max="60" step="0.5"
-                        style="width: 100%; padding: 12px; border: 2px solid #93C5FD; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">Generate Study Plan</button>
-            </form>
-            
-            <div id="planResults" style="margin-top: 30px; display: none;">
-                <h3 style="color: #4169E1; border-bottom: 3px solid #93C5FD; padding-bottom: 10px;">Your Study Plan</h3>
-                <div id="sessionsList"></div>
-            </div>
-            
-            <div id="loadingSpinner" style="text-align: center; display: none; margin-top: 20px;">
-                <p style="color: #4169E1; font-weight: 600;">Creating your personalized study plan...</p>
-            </div>
-            
-            <div id="errorMessage" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-top: 20px; display: none;"></div>
-        </section>
-        
-        <!-- Saved Plans Section -->
-        <section style="background: #fff; padding: 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);">
-            <h2 style="text-align: center; color: #4169E1; margin-bottom: 10px;">Your Saved Study Plans</h2>
-            <p style="text-align: center; color: #555; margin-bottom: 20px;">Saved privately in this browser on this device.</p>
-            <button onclick="loadSavedPlans()" class="btn btn-secondary" style="display: block; margin: 0 auto 20px;">Refresh List</button>
-            <div id="savedPlansList" style="display: grid; gap: 15px;"></div>
-            <div id="noPlansMessage" style="text-align: center; color: #999; padding: 30px;">
-                No study plans yet. Create one above to get started!
-            </div>
+        <section style="background: #fff; padding: 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1); text-align: center;">
+            <h2 style="color: #4169E1;">Ready to study smarter?</h2>
+            <p style="color: #555; margin-bottom: 24px;">Create a personal study plan or turn long notes into helpful revision points.</p>
+            <a class="btn btn-primary" href="study-tools.html">Open Study Tools</a>
         </section>
         
         <!-- Target Audience -->
@@ -415,7 +380,7 @@
         <section style="background: linear-gradient(135deg, #4169E1, #2e5bdb); padding: 60px 40px; border-radius: 12px; margin-bottom: 40px; text-align: center; color: #fff;">
             <h2 style="color: #fff; margin: 0 0 15px 0; font-size: 2rem;">Ready to Transform Your Study Habits?</h2>
             <p style="font-size: 1.1rem; margin-bottom: 30px;">Join thousands of NCEA students using LearnFlow to study smarter and achieve their goals.</p>
-            <button class="btn btn-primary" style="background: #fff; color: #4169E1;">Get Started Free</button>
+            <a class="btn btn-primary" style="background: #fff; color: #4169E1;" href="study-tools.html">Get Started Free</a>
         </section>
         
         <!-- Footer Info -->
@@ -436,176 +401,5 @@
         LearnFlow is an innovative study planning platform designed to help secondary school students succeed in their NCEA qualifications.
     </div>
     
-    <script>
-        const SAVED_PLANS_KEY = 'learnflow-saved-plans';
-
-        // Load this browser's saved plans on page load.
-        window.addEventListener('load', loadSavedPlans);
-        
-        // Study Plan Form Handler
-        document.getElementById('planForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const goal = document.getElementById('goal').value;
-            const horizonDays = parseInt(document.getElementById('days').value);
-            const hoursPerWeek = parseFloat(document.getElementById('hours').value);
-            
-            // Show loading, hide errors
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('planResults').style.display = 'none';
-            
-            try {
-                // Call the backend API
-                const response = await fetch('http://localhost:8080/api/plans', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        goal: goal,
-                        horizonDays: horizonDays,
-                        hoursPerWeek: hoursPerWeek
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                
-                const plan = await response.json();
-                
-                // Hide loading
-                document.getElementById('loadingSpinner').style.display = 'none';
-                
-                // Display the plan
-                displayPlan(plan);
-                
-                // Save the complete generated plan in this browser so it survives refreshes.
-                savePlanLocally(plan);
-                loadSavedPlans();
-                
-                // Clear form
-                document.getElementById('planForm').reset();
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loadingSpinner').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorMessage').textContent = 
-                    'Error creating study plan. Make sure the backend is running on http://localhost:8080';
-            }
-        });
-        
-        function displayPlan(plan) {
-            const sessionsList = document.getElementById('sessionsList');
-            sessionsList.innerHTML = '';
-            
-            // Display goal
-            const goalDiv = document.createElement('div');
-            goalDiv.style.cssText = 'background: #E0E7FF; padding: 15px; border-radius: 8px; margin-bottom: 15px;';
-            goalDiv.innerHTML = `<strong style="color: #4169E1;">Goal:</strong> ${plan.goal}`;
-            sessionsList.appendChild(goalDiv);
-            
-            // Display sessions
-            if (plan.sessions && plan.sessions.length > 0) {
-                plan.sessions.forEach((session, index) => {
-                    const sessionDiv = document.createElement('div');
-                    sessionDiv.style.cssText = 'background: #F8FAFC; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #4169E1;';
-                    sessionDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong style="color: #4169E1;">Day ${index + 1}: ${session.day}</strong>
-                                <p style="margin: 8px 0 0 0; color: #555;">${session.topic}</p>
-                            </div>
-                            <div style="text-align: right; color: #4169E1; font-weight: 600;">
-                                ${session.durationHours}h
-                            </div>
-                        </div>
-                    `;
-                    sessionsList.appendChild(sessionDiv);
-                });
-            }
-            
-            // Show results
-            document.getElementById('planResults').style.display = 'block';
-        }
-
-        function getSavedPlans() {
-            try {
-                return JSON.parse(localStorage.getItem(SAVED_PLANS_KEY)) || [];
-            } catch (error) {
-                console.error('Could not read saved plans:', error);
-                return [];
-            }
-        }
-
-        function savePlanLocally(plan) {
-            const savedPlans = getSavedPlans();
-            const localPlan = {
-                ...plan,
-                id: window.crypto?.randomUUID?.() || `plan-${Date.now()}`,
-                createdAt: new Date().toISOString()
-            };
-
-            savedPlans.unshift(localPlan);
-            localStorage.setItem(SAVED_PLANS_KEY, JSON.stringify(savedPlans));
-        }
-
-        function loadSavedPlans() {
-            const plans = getSavedPlans();
-            const savedPlansList = document.getElementById('savedPlansList');
-            const noPlansMessage = document.getElementById('noPlansMessage');
-
-            savedPlansList.innerHTML = '';
-
-            if (plans.length === 0) {
-                noPlansMessage.style.display = 'block';
-                return;
-            }
-
-            noPlansMessage.style.display = 'none';
-            plans.forEach(plan => {
-                const planCard = document.createElement('div');
-                planCard.style.cssText = 'background: #F8FAFC; padding: 20px; border-radius: 8px; border-left: 4px solid #4169E1; display: flex; justify-content: space-between; align-items: center; gap: 15px;';
-
-                const details = document.createElement('div');
-                const title = document.createElement('h4');
-                title.style.cssText = 'margin: 0; color: #4169E1;';
-                title.textContent = plan.goal;
-                const created = document.createElement('p');
-                created.style.cssText = 'margin: 5px 0; color: #999; font-size: 12px;';
-                created.textContent = `Saved ${new Date(plan.createdAt).toLocaleString()}`;
-                const description = document.createElement('p');
-                description.style.cssText = 'margin: 5px 0; color: #555; font-size: 13px;';
-                description.textContent = `${plan.sessions?.length || 0} study sessions`;
-                details.append(title, created, description);
-
-                const actions = document.createElement('div');
-                actions.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;';
-                const viewButton = document.createElement('button');
-                viewButton.className = 'btn btn-secondary';
-                viewButton.style.cssText = 'padding: 8px 15px; font-size: 12px;';
-                viewButton.textContent = 'View';
-                viewButton.addEventListener('click', () => displayPlan(plan));
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'btn btn-secondary';
-                deleteButton.style.cssText = 'padding: 8px 15px; font-size: 12px;';
-                deleteButton.textContent = 'Delete';
-                deleteButton.addEventListener('click', () => deletePlan(plan.id));
-                actions.append(viewButton, deleteButton);
-                planCard.append(details, actions);
-                savedPlansList.appendChild(planCard);
-            });
-        }
-
-        function deletePlan(planId) {
-            if (!confirm('Are you sure you want to delete this plan?')) return;
-
-            const updatedPlans = getSavedPlans().filter(plan => plan.id !== planId);
-            localStorage.setItem(SAVED_PLANS_KEY, JSON.stringify(updatedPlans));
-            loadSavedPlans();
-        }
-    </script>
 </body>
 </html>

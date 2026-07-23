@@ -29,6 +29,73 @@ h2, h3, h4, h5, h6 {
     margin-bottom: 15px;
 }
 
+.page-nav {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #4169E1 0%, #2e5bdb 100%);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(65, 105, 225, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-nav__brand,
+.page-nav__links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.page-nav__links {
+    display: flex;
+    gap: 18px;
+}
+
+.page-nav__links a[aria-current="page"] {
+    color: #E0E7FF;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.tool-card {
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);
+}
+
+.tool-card textarea,
+.tool-card input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #93C5FD;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.tool-card textarea {
+    min-height: 220px;
+    resize: vertical;
+}
+
+.tool-output {
+    background: #F8FAFC;
+    border-left: 4px solid #4169E1;
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 18px;
+}
+
 
 
 .navbar {
@@ -204,6 +271,11 @@ li img {
     
     .navbar li {
         width: 100%;
+    }
+
+    .page-nav {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 
