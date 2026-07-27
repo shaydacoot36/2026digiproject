@@ -49,6 +49,22 @@ h2, h3, h4, h5, h6 {
     font-weight: 700;
 }
 
+.page-nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-nav__logo {
+    width: 26px;
+    height: 26px;
+    max-width: 26px;
+    max-height: 26px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #fff;
+}
+
 .page-nav__links {
     display: flex;
     gap: 18px;
