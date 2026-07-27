@@ -14,15 +14,17 @@
         .hero {
             text-align: center;
             padding: 60px 20px;
-            background: linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%);
+            background: radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.28), transparent 34%), radial-gradient(circle at 85% 15%, rgba(20, 184, 166, 0.20), transparent 30%), linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%);
             border-radius: 12px;
             margin-bottom: 40px;
+            box-shadow: 0 16px 35px rgba(65, 105, 225, 0.12);
+            animation: hero-glow 5s ease-in-out infinite alternate;
         }
         
         .hero h1 {
             margin: 0;
             font-size: 3.5rem;
-            background: linear-gradient(135deg, #4169E1, #93C5FD);
+            background: linear-gradient(100deg, #4169E1, #38BDF8, #14B8A6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -61,10 +63,11 @@
             font-size: 15px;
             cursor: pointer;
             border: none;
+            transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #4169E1, #2e5bdb);
+            background: linear-gradient(135deg, #4169E1, #1E40AF);
             color: #fff;
             box-shadow: 0 8px 20px rgba(65, 105, 225, 0.3);
         }
@@ -73,6 +76,11 @@
             background: #fff;
             color: #4169E1;
             border: 2px solid #4169E1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
         }
         
         .hero p {
@@ -94,6 +102,13 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);
             text-align: center;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+            border: 1px solid rgba(65, 105, 225, 0.08);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 30px rgba(30, 64, 175, 0.16);
         }
         
         .feature-icon {
@@ -190,6 +205,15 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+        }
+
+        .tech-badge:nth-child(even) {
+            background: #14B8A6;
+        }
+
+        @keyframes hero-glow {
+            from { box-shadow: 0 16px 35px rgba(65, 105, 225, 0.12); }
+            to { box-shadow: 0 20px 42px rgba(20, 184, 166, 0.20); }
         }
     </style>
 </head>

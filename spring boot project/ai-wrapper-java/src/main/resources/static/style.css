@@ -1,4 +1,16 @@
 
+:root {
+    --learnflow-blue: #4169E1;
+    --learnflow-navy: #1E40AF;
+    --learnflow-sky: #38BDF8;
+    --learnflow-teal: #14B8A6;
+    --learnflow-amber: #F59E0B;
+    --learnflow-lavender: #E0E7FF;
+    --learnflow-mist: #F8FAFC;
+    --learnflow-ink: #0F172A;
+    --learnflow-slate: #475569;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,15 +19,15 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%);
-    color: #111827;
+    background: linear-gradient(135deg, var(--learnflow-mist) 0%, var(--learnflow-lavender) 100%);
+    color: var(--learnflow-ink);
     line-height: 1.6;
     min-height: 100vh;
     padding: 20px;
 }
 
 h1 {
-    color: #4169E1;
+    color: var(--learnflow-blue);
     font-size: 2.5rem;
     margin-bottom: 10px;
     font-weight: 700;
@@ -24,16 +36,47 @@ h1 {
 }
 
 h2, h3, h4, h5, h6 {
-    color: #111827;
+    color: var(--learnflow-ink);
     font-weight: 600;
     margin-bottom: 15px;
+}
+
+.hero {
+    text-align: center;
+    padding: 56px 24px;
+    margin-bottom: 40px;
+    border-radius: 16px;
+    background: radial-gradient(circle at 14% 15%, rgba(56, 189, 248, 0.28), transparent 34%), radial-gradient(circle at 86% 18%, rgba(20, 184, 166, 0.18), transparent 30%), linear-gradient(135deg, var(--learnflow-mist), var(--learnflow-lavender));
+    box-shadow: 0 16px 35px rgba(65, 105, 225, 0.12);
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 6vw, 3.5rem);
+    background: linear-gradient(100deg, var(--learnflow-blue), var(--learnflow-sky), var(--learnflow-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero .tagline {
+    margin-top: 14px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--learnflow-ink);
+}
+
+.hero .subtitle {
+    max-width: 650px;
+    margin: 10px auto 0;
+    color: var(--learnflow-slate);
 }
 
 .page-nav {
     max-width: 1200px;
     margin: 0 auto 24px;
     padding: 12px 18px;
-    background: linear-gradient(135deg, #4169E1 0%, #2e5bdb 100%);
+    background: linear-gradient(135deg, var(--learnflow-blue) 0%, var(--learnflow-navy) 100%);
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(65, 105, 225, 0.2);
     display: flex;
@@ -88,6 +131,17 @@ h2, h3, h4, h5, h6 {
     padding: 32px;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(65, 105, 225, 0.1);
+    border: 1px solid rgba(65, 105, 225, 0.12);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 34px rgba(30, 64, 175, 0.16);
+}
+
+.tool-card:nth-child(2n) {
+    border-top: 4px solid var(--learnflow-teal);
 }
 
 .tool-card textarea,
@@ -110,6 +164,71 @@ h2, h3, h4, h5, h6 {
     border-radius: 8px;
     margin-top: 20px;
     padding: 18px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    font: 700 15px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-decoration: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+}
+
+.btn:focus-visible,
+.page-nav a:focus-visible {
+    outline: 3px solid var(--learnflow-amber);
+    outline-offset: 3px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--learnflow-blue), var(--learnflow-navy));
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(30, 64, 175, 0.25);
+}
+
+.btn-secondary {
+    background: #fff;
+    border: 2px solid var(--learnflow-blue);
+    color: var(--learnflow-navy);
+}
+
+/* Small colour accents keep the blue palette academic without making every card identical. */
+.feature-card:nth-child(3n) {
+    border-top: 4px solid var(--learnflow-teal);
+}
+
+.feature-card:nth-child(4n) {
+    border-top-color: var(--learnflow-amber);
+}
+
+.feature-card:nth-child(3n) .feature-icon {
+    color: var(--learnflow-teal);
+}
+
+.feature-card:nth-child(4n) .feature-icon {
+    color: var(--learnflow-amber);
+}
+
+.page-nav__links a:hover {
+    color: var(--learnflow-sky);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
 }
 
 
