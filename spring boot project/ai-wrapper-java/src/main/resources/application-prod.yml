@@ -1,8 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/aiwrapper
-    username: aiwrapper
-    password: change_me
+    # Set these values in Render's Environment tab; never commit real credentials.
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      # Creates the tables for a new hosted database. Change to "validate" once stable.
+      ddl-auto: update
+
+server:
+  port: ${PORT:8080}
