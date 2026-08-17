@@ -68,6 +68,15 @@
                 <button id="summarizeButton" class="btn btn-primary" style="width: 100%; margin-top: 18px;">Summarize Notes</button>
                 <div id="summaryOutput" class="tool-output" style="display: none;" aria-live="polite"></div>
             </section>
+
+            <section class="tool-card">
+                <h2 style="color: #4169E1;">AI Quiz Generator</h2>
+                <p style="color: #555; margin-bottom: 24px;">Turn your notes into quick multiple-choice revision questions.</p>
+                <label for="quizNotes" style="display: block; font-weight: 600; margin-bottom: 8px;">Notes for quiz</label>
+                <textarea id="quizNotes" placeholder="Paste your notes here to generate a short quiz..."></textarea>
+                <button id="generateQuizButton" class="btn btn-primary" style="width: 100%; margin-top: 18px;">Generate Quiz</button>
+                <div id="quizOutput" class="tool-output" style="display: none;" aria-live="polite"></div>
+            </section>
         </div>
 
         <section class="tool-card" style="margin-bottom: 40px;">
@@ -143,6 +152,82 @@
             output.appendChild(list);
             output.style.display = 'block';
         });
+
+        document.getElementById('generateQuizButton').addEventListener('click', () => {
+            const notes = document.getElementById('quizNotes').value.trim();
+            const output = document.getElementById('quizOutput');
+            if (!notes) {
+                output.textContent = 'Paste some notes first, then generate a quiz.';
+                output.style.display = 'block';
+                return;
+            }
+
+            const sentences = (notes.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [])
+                .map(sentence => sentence.trim())
+                .filter(sentence => sentence.length > 30);
+
+            if (sentences.length === 0) {
+                output.textContent = 'Add a few more detailed notes so the quiz generator can create useful questions.';
+                output.style.display = 'block';
+                return;
+            }
+
+            const quizQuestions = [];
+            const questionCount = Math.min(3, sentences.length);
+
+            for (let i = 0; i < questionCount; i++) {
+                const correct = sentences[i % sentences.length];
+                const distractors = sentences.filter(sentence => sentence !== correct).slice(0, 3);
+                const options = shuffleArray([
+                    correct,
+                    ...distractors,
+                    'This topic is not covered in the notes.',
+                    'This idea is only relevant for a different subject.'
+                ]).slice(0, 4);
+
+                quizQuestions.push({
+                    question: `Question ${i + 1}: Which statement best matches the main idea in this note?`,
+                    options,
+                    answer: correct
+                });
+            }
+
+            output.innerHTML = '<strong style="color: #4169E1;">AI-generated quiz</strong>';
+            quizQuestions.forEach((quiz, index) => {
+                const question = document.createElement('div');
+                question.style.marginTop = '18px';
+                const prompt = document.createElement('p');
+                prompt.style.margin = '0 0 8px';
+                prompt.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(quiz.question)}`;
+                question.appendChild(prompt);
+
+                const optionsList = document.createElement('ul');
+                optionsList.style.cssText = 'margin: 0; padding-left: 20px; list-style: none;';
+                quiz.options.forEach(option => {
+                    const item = document.createElement('li');
+                    item.style.cssText = 'padding: 8px 10px; border-radius: 6px; background: #F8FAFC; margin-bottom: 8px;';
+                    item.textContent = option;
+                    optionsList.appendChild(item);
+                });
+
+                const answer = document.createElement('p');
+                answer.style.cssText = 'margin-top: 10px; color: #0F766E; font-weight: 600;';
+                answer.textContent = `Answer: ${quiz.answer}`;
+                question.append(optionsList, answer);
+                output.appendChild(question);
+            });
+
+            output.style.display = 'block';
+        });
+
+        function shuffleArray(items) {
+            const copy = [...items];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const randomIndex = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[randomIndex]] = [copy[randomIndex], copy[i]];
+            }
+            return copy;
+        }
 
         function getSavedPlans() {
             try { return JSON.parse(localStorage.getItem(SAVED_PLANS_KEY)) || []; }
