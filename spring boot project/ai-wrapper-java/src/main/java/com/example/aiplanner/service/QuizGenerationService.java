@@ -130,19 +130,23 @@ public class QuizGenerationService {
                 .retrieve()
                 .body(String.class);
 
-        var rootNode = objectMapper.readTree(response);
-        String result = rootNode.path("choices").path(0).path("message").path("content").asText();
-        if (result == null || result.isBlank()) {
-            throw new IllegalStateException("No AI content returned");
-        }
+        try {
+            var rootNode = objectMapper.readTree(response);
+            String result = rootNode.path("choices").path(0).path("message").path("content").asText();
+            if (result == null || result.isBlank()) {
+                throw new IllegalStateException("No AI content returned");
+            }
 
-        String cleaned = result.trim();
-        if (cleaned.startsWith("```")) {
-            cleaned = cleaned.replaceFirst("^```(?:json)?\\s*", "").replaceFirst("\\s*```$", "");
-        }
+            String cleaned = result.trim();
+            if (cleaned.startsWith("```")) {
+                cleaned = cleaned.replaceFirst("^```(?:json)?\\s*", "").replaceFirst("\\s*```$", "");
+            }
 
-        QuizResponse parsed = objectMapper.readValue(cleaned, QuizResponse.class);
-        return parsed == null || parsed.getQuestions() == null || parsed.getQuestions().isEmpty() ? generateLocalQuiz(notes, questionCount) : parsed;
+            QuizResponse parsed = objectMapper.readValue(cleaned, QuizResponse.class);
+            return parsed == null || parsed.getQuestions() == null || parsed.getQuestions().isEmpty() ? generateLocalQuiz(notes, questionCount) : parsed;
+        } catch (Exception e) {
+            return generateLocalQuiz(notes, questionCount);
+        }
     }
 
     private List<String> parseSentences(String notes) {
