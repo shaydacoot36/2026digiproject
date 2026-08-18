@@ -153,7 +153,7 @@
             output.style.display = 'block';
         });
 
-        document.getElementById('generateQuizButton').addEventListener('click', () => {
+        document.getElementById('generateQuizButton').addEventListener('click', async () => {
             const notes = document.getElementById('quizNotes').value.trim();
             const output = document.getElementById('quizOutput');
             if (!notes) {
@@ -162,62 +162,66 @@
                 return;
             }
 
-            const sentences = (notes.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [])
-                .map(sentence => sentence.trim())
-                .filter(sentence => sentence.length > 30);
-
-            if (sentences.length === 0) {
-                output.textContent = 'Add a few more detailed notes so the quiz generator can create useful questions.';
-                output.style.display = 'block';
-                return;
-            }
-
-            const quizQuestions = [];
-            const questionCount = Math.min(3, sentences.length);
-
-            for (let i = 0; i < questionCount; i++) {
-                const correct = sentences[i % sentences.length];
-                const distractors = sentences.filter(sentence => sentence !== correct).slice(0, 3);
-                const options = shuffleArray([
-                    correct,
-                    ...distractors,
-                    'This topic is not covered in the notes.',
-                    'This idea is only relevant for a different subject.'
-                ]).slice(0, 4);
-
-                quizQuestions.push({
-                    question: `Question ${i + 1}: Which statement best matches the main idea in this note?`,
-                    options,
-                    answer: correct
-                });
-            }
-
-            output.innerHTML = '<strong style="color: #4169E1;">AI-generated quiz</strong>';
-            quizQuestions.forEach((quiz, index) => {
-                const question = document.createElement('div');
-                question.style.marginTop = '18px';
-                const prompt = document.createElement('p');
-                prompt.style.margin = '0 0 8px';
-                prompt.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(quiz.question)}`;
-                question.appendChild(prompt);
-
-                const optionsList = document.createElement('ul');
-                optionsList.style.cssText = 'margin: 0; padding-left: 20px; list-style: none;';
-                quiz.options.forEach(option => {
-                    const item = document.createElement('li');
-                    item.style.cssText = 'padding: 8px 10px; border-radius: 6px; background: #F8FAFC; margin-bottom: 8px;';
-                    item.textContent = option;
-                    optionsList.appendChild(item);
-                });
-
-                const answer = document.createElement('p');
-                answer.style.cssText = 'margin-top: 10px; color: #0F766E; font-weight: 600;';
-                answer.textContent = `Answer: ${quiz.answer}`;
-                question.append(optionsList, answer);
-                output.appendChild(question);
-            });
-
+            output.innerHTML = '<strong style="color: #4169E1;">Creating your quiz…</strong>';
             output.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/quiz', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes, questionCount: 3 })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Quiz request failed');
+                }
+
+                const data = await response.json();
+                const quizQuestions = Array.isArray(data.questions) ? data.questions : [];
+
+                if (!quizQuestions.length) {
+                    output.textContent = 'The quiz service could not generate questions from those notes. Try adding clearer, more detailed notes.';
+                    output.style.display = 'block';
+                    return;
+                }
+
+                output.innerHTML = '<strong style="color: #4169E1;">AI-generated quiz</strong>';
+                quizQuestions.forEach((quiz, index) => {
+                    const question = document.createElement('div');
+                    question.style.marginTop = '18px';
+                    const prompt = document.createElement('p');
+                    prompt.style.margin = '0 0 8px';
+                    prompt.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(quiz.question || 'Question')}`;
+                    question.appendChild(prompt);
+
+                    const optionsList = document.createElement('ul');
+                    optionsList.style.cssText = 'margin: 0; padding-left: 20px; list-style: none;';
+                    (quiz.options || []).forEach(option => {
+                        const item = document.createElement('li');
+                        item.style.cssText = 'padding: 8px 10px; border-radius: 6px; background: #F8FAFC; margin-bottom: 8px;';
+                        item.textContent = option;
+                        optionsList.appendChild(item);
+                    });
+
+                    const answer = document.createElement('p');
+                    answer.style.cssText = 'margin-top: 10px; color: #0F766E; font-weight: 600;';
+                    answer.textContent = `Answer: ${quiz.correctAnswer || quiz.answer || 'See explanation below'}`;
+                    question.append(optionsList, answer);
+
+                    if (quiz.explanation) {
+                        const explanation = document.createElement('p');
+                        explanation.style.cssText = 'margin-top: 8px; color: #475569;';
+                        explanation.textContent = `Why: ${quiz.explanation}`;
+                        question.appendChild(explanation);
+                    }
+
+                    output.appendChild(question);
+                });
+                output.style.display = 'block';
+            } catch (error) {
+                output.textContent = 'The quiz service is unavailable right now. The app will still use a built-in fallback generator if your AI key is not configured.';
+                output.style.display = 'block';
+            }
         });
 
         function shuffleArray(items) {
