@@ -27,7 +27,12 @@
 
         <div class="tool-grid">
             <section class="tool-card">
-                <h2 style="color: #4169E1;">Smart Study Planner</h2>
+                <div class="planner-heading">
+                    <h2 style="color: #4169E1;">Smart Study Planner</h2>
+                    <button type="button" id="plannerHelpButton" class="btn btn-help" aria-haspopup="dialog" aria-controls="plannerHelpDialog">
+                        <span aria-hidden="true">?</span> Help
+                    </button>
+                </div>
                 <p style="color: #555; margin-bottom: 24px;">Create a realistic study plan around your goal and available time.</p>
                 <form id="planForm">
                     <div style="margin-bottom: 18px;">
@@ -92,11 +97,58 @@
         </section>
     </main>
 
+    <div id="plannerHelpDialog" class="help-modal" role="dialog" aria-modal="true" aria-labelledby="plannerHelpTitle" hidden>
+        <div class="help-modal__backdrop" data-close-help></div>
+        <section class="help-modal__panel" role="document">
+            <div class="help-modal__header">
+                <div>
+                    <p class="help-modal__eyebrow">Quick tutorial</p>
+                    <h2 id="plannerHelpTitle">How to use the Study Planner</h2>
+                </div>
+                <button type="button" class="help-modal__close" data-close-help aria-label="Close planner help">&times;</button>
+            </div>
+            <ol class="help-modal__steps">
+                <li><strong>Enter your subject.</strong><span>Type what you want to learn, such as “Biology NCEA Level 3”.</span></li>
+                <li><strong>Choose your study period.</strong><span>Enter how many days you have until your test or goal.</span></li>
+                <li><strong>Set weekly hours.</strong><span>Tell the planner how many hours you can realistically study each week.</span></li>
+                <li><strong>Select your available days.</strong><span>Tick the days you can study. Leave unavailable days unchecked.</span></li>
+                <li><strong>Generate your plan.</strong><span>Press “Generate Study Plan” to see your sessions, topics, dates, and time.</span></li>
+            </ol>
+            <p class="help-modal__tip"><strong>Tip:</strong> You can change the fields and generate a new plan whenever your schedule changes.</p>
+            <button type="button" class="btn btn-primary help-modal__done" data-close-help>Got it</button>
+        </section>
+    </div>
+
     <div class="footer-bar">© LearnFlow - AI-Powered Study Planner for NCEA Students</div>
     <div class="disclaimer">LearnFlow is an innovative study planning platform designed to help secondary school students succeed in their NCEA qualifications.</div>
 
     <script>
         const SAVED_PLANS_KEY = 'learnflow-saved-plans';
+
+        const plannerHelpButton = document.getElementById('plannerHelpButton');
+        const plannerHelpDialog = document.getElementById('plannerHelpDialog');
+        let helpTrigger = null;
+
+        function closePlannerHelp() {
+            plannerHelpDialog.hidden = true;
+            document.body.classList.remove('modal-open');
+            if (helpTrigger) helpTrigger.focus();
+        }
+
+        plannerHelpButton.addEventListener('click', () => {
+            helpTrigger = document.activeElement;
+            plannerHelpDialog.hidden = false;
+            document.body.classList.add('modal-open');
+            plannerHelpDialog.querySelector('.help-modal__close').focus();
+        });
+
+        plannerHelpDialog.querySelectorAll('[data-close-help]').forEach((element) => {
+            element.addEventListener('click', closePlannerHelp);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !plannerHelpDialog.hidden) closePlannerHelp();
+        });
 
         document.getElementById('planForm').addEventListener('submit', async (event) => {
             event.preventDefault();
