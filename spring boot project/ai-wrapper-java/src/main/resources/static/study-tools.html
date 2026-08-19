@@ -304,12 +304,34 @@
             heading.textContent = `Your plan: ${plan.goal}`;
             results.appendChild(heading);
             (plan.sessions || []).forEach((session, index) => {
-                const sessionItem = document.createElement('p');
-                sessionItem.style.margin = '10px 0 0';
-                sessionItem.textContent = `${session.day}: ${session.topic} (${session.durationHours}h)`;
+                const sessionItem = document.createElement('article');
+                sessionItem.className = 'plan-session';
+
+                const sessionNumber = document.createElement('span');
+                sessionNumber.className = 'plan-session__number';
+                sessionNumber.textContent = String(index + 1);
+
+                const details = document.createElement('div');
+                details.className = 'plan-session__details';
+                const date = document.createElement('strong');
+                date.textContent = formatPlanDate(session.day);
+                const task = document.createElement('p');
+                task.textContent = session.topic;
+                details.append(date, task);
+
+                const duration = document.createElement('span');
+                duration.className = 'plan-session__duration';
+                duration.textContent = `${session.durationHours}h`;
+                sessionItem.append(sessionNumber, details, duration);
                 results.appendChild(sessionItem);
             });
             results.style.display = 'block';
+        }
+
+        function formatPlanDate(value) {
+            const date = new Date(`${value}T00:00:00`);
+            if (Number.isNaN(date.getTime())) return value;
+            return date.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
         }
 
         function renderSavedPlans() {

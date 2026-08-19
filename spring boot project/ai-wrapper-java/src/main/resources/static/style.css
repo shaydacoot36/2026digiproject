@@ -307,6 +307,49 @@ body.modal-open {
     padding: 18px;
 }
 
+.plan-session {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    align-items: start;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 13px;
+    border: 1px solid #DBEAFE;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.plan-session__number {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #DBEAFE;
+    color: var(--learnflow-navy);
+    font-weight: 800;
+}
+
+.plan-session__details strong {
+    color: var(--learnflow-navy);
+}
+
+.plan-session__details p {
+    margin-top: 3px;
+    color: var(--learnflow-slate);
+    font-size: 14px;
+}
+
+.plan-session__duration {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #CCFBF1;
+    color: #0F766E;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
